@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Frota - NATA</title>
+        <link rel="stylesheet" href="../css/layout.css"> 
+        <link rel="stylesheet" href="../css/sidebar.css">
+        <link rel="stylesheet" href="../css/topbar.css">
+        <link rel="stylesheet" href="../css/cardAnimadoFoto.css">
+        <link rel="stylesheet" href="../css/modalB.css">        
+        <link rel="stylesheet" href="../css/filtros.css">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
+        <script src="../js/sidebar.js" defer></script>
+        <script src="../js/topbar.js" defer></script>
+        <script src="../js/veiculos.js" defer></script>
+    </head>
+    <body data-nav-active="veiculos">
+        <div class="layout-app">
+
+            <div id="sidebar-container"></div>
+
+            <div class="conteudo-direito">
+                
+                <header class="topbar">
+                    <div class="topbar-titulo">
+                        <h1> Frota </h1>
+                    </div>
+                    
+                    <div class="topbar-usuario">
+                        <div class="separador"></div>
+                        <span class="saudacao">
+                            Olá, <strong id="nome-usuario">carregando...</strong>
+                        </span>
+                    </div>
+                </header>
+
+                <main class="area-principal">
+                    <div class="acoes-topo">
+                        <button class="btn-primario" onclick="window.location.href='cadastroveiculo.html'">
+                            <i class="ph ph-plus"></i> Adicionar veículo
+                        </button>
+                    </div>
+
+                    <h2 class="titulo-secao">Lista de veículos</h2>
+
+                    <div class="barra-filtros-veiculos">
+                        <div class="input-grupo pesquisa">
+                            <i class="ph ph-magnifying-glass"></i> 
+                            <input type="text" id="pesquisa-veiculo" placeholder="Placa ou Proprietário...">
+                        </div>
+
+                        <div class="filtros-container-flex">
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Tipo:</span>
+                                <label><input type="checkbox" class="filtro-tipo" value="Moto"> Moto</label>
+                                <label><input type="checkbox" class="filtro-tipo" value="Carro"> Carro</label>
+                                <label><input type="checkbox" class="filtro-tipo" value="Caminhonete"> Caminhonete</label>
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Carga Mín (kg):</span>
+                                <input type="number" id="filtro-carga" class="input-filtro-curto" placeholder="Ex: 500">
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Ano:</span>
+                                <input type="number" id="filtro-ano" class="input-filtro-curto" placeholder="2020">
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Última revisão:</span>
+                                <input type="date" id="filtro-data-revisao" class="input-filtro-data">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-cards" id="container-veiculos">
+                    </div>
+
+                    <div class="paginacao-container">
+                        <span class="info-paginacao" id="info-paginacao">Carregando informações...</span>
+                        <div class="controles-paginacao" id="controles-paginacao"></div>
+                    </div>
+
+                    <div class="modal-overlay" id="modal-overlay" onclick="fecharModais()"></div>
+
+                    <div class="modal-caixa modal-larga" id="modal-editar-veiculo">
+                        <button class="btn-fechar-flutuante" onclick="fecharModais()">&times;</button>
+
+                        <div class="modal-corpo">
+                            <h2 class="titulo-modal-serif">Editar Dados do Veículo</h2>
+                            
+                            <form id="form-editar-veiculo">
+                                <input type="hidden" id="editar-id">
+
+                                <section class="secao-form-modal">
+                                    <h3>Informações do Veículo</h3>
+                                    <div class="input-grupo-form">
+                                        <label>Tipo</label>
+                                        <div class="radio-status">
+                                            <label><input type="radio" name="editar-tipo" value="Moto"> Moto</label>
+                                            <label><input type="radio" name="editar-tipo" value="Carro"> Carro</label>
+                                            <label><input type="radio" name="editar-tipo" value="Caminhonete"> Caminhonete</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label for="editar-placa">Placa</label>
+                                            <input type="text" id="editar-placa" required>
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label for="editar-ano">Ano</label>
+                                            <input type="number" id="editar-ano">
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label for="editar-marca">Marca</label>
+                                            <input type="text" id="editar-marca">
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label for="editar-modelo">Modelo</label>
+                                            <input type="text" id="editar-modelo">
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label for="editar-km">KM Atual</label>
+                                            <input type="number" id="editar-km">
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label for="editar-carga">Carga Máxima (kg)</label>
+                                            <input type="text" id="editar-carga">
+                                        </div>
+                                    </div>
+
+                                    <div class="input-grupo-form mt-20">
+                                        <label for="editar-revisao">Data da Última Revisão</label>
+                                        <input type="date" id="editar-revisao">
+                                    </div>
+                                </section>
+
+                                <hr class="linha-divisoria-modal">
+
+                                <section class="secao-form-modal">
+                                    <h3>Informações do Proprietário</h3>
+                                    <div class="input-grupo-form">
+                                        <label for="editar-nome-prop">Nome do Proprietário</label>
+                                        <input type="text" id="editar-nome-prop">
+                                    </div>
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label for="editar-tel-prop">Telefone</label>
+                                            <input type="text" id="editar-tel-prop">
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label for="editar-email-prop">E-mail</label>
+                                            <input type="email" id="editar-email-prop">
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <div class="acoes-modal-centralizadas">
+                                    <button type="button" class="btn-modal-deletar-real" onclick="abrirConfirmacaoExclusao()">
+                                        <i class="ph ph-trash"></i> EXCLUIR
+                                    </button>
+                                    <button type="button" class="btn-modal-deletar" onclick="fecharModais()">Cancelar</button>
+                                    <button type="submit" class="btn-modal-salvar">
+                                        <i class="ph ph-floppy-disk"></i> Atualizar Dados
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="modal-confirmar-exclusao" class="modal-caixa modal-confirmacao">
+                        <div class="modal-corpo-confirmacao">
+                            <header class="header-confirmacao">
+                                <h3>REMOVER VEÍCULO?</h3>
+                            </header>
+                            <div class="conteudo-confirmacao">
+                                <p>Tem certeza que deseja excluir o veículo de placa <br><strong id="placa-exclusao-titulo"></strong>?</p>
+                            </div>
+                            <div class="acoes-confirmacao">
+                                <button type="button" class="btn-cancela-confirmacao" onclick="fecharConfirmacao()">CANCELAR</button>
+                                <button type="button" class="btn-sim-confirmacao" id="btn-confirmar-delete">SIM, EXCLUIR</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+                </main>
+
+                <div id="footer-container"></div>
+
+            </div>
+        </div> 
+    </body>
+</html>

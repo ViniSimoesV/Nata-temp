@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Voluntários - NATA</title>
+    <link rel="stylesheet" href="../css/layout.css"> 
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+    <link rel="stylesheet" href="../css/tabela.css">
+    <link rel="stylesheet" href="../css/modal.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+    <!-- Biblioteca de ícones Phosphor Icons (https://phosphoricons.com/) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script src="../js/sidebar.js" defer></script>
+    <script src="../js/topbar.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script src="../js/voluntario.js" defer></script>
+</head>
+<body data-nav-active="voluntarios">
+    <div class="layout-app">
+
+        <div id="sidebar-container"></div>
+
+        <div class="conteudo-direito">
+            
+            <header class="topbar">
+                <div class="topbar-titulo">
+                    <h1>Voluntários</h1>
+                </div>
+                
+                <div class="topbar-usuario">
+                    <div class="separador"></div>
+                    <span class="saudacao">
+                        Olá, <strong id="nome-usuario">carregando...</strong>
+                    </span>
+                </div>
+            </header>
+
+            <main class="area-principal">
+                
+                <div class="cabecalho-secao">
+                    <h2 class="titulo-secao">Lista de voluntários</h2>
+                    <button class="btn-primario" onclick="window.location.href='cadastrovoluntario.html'">
+                        <i class="ph ph-plus"></i> Adicionar voluntário
+                    </button>
+                </div>
+                <div class="barra-filtros">
+                    <div class="input-grupo pesquisa">
+                        <input type="text" id="pesquisa-nome" placeholder="Pesquisar">
+                        <i class="ph ph-magnifying-glass"></i>
+                    </div>
+                    <div class="input-grupo filtro-status">
+                        <select id="filtro-status">
+                            <option value="">Filtrar por status</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                            <option value="pendente">Pendente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tabela-container">
+                    <table class="tabela-dados">
+                        <thead>
+                            <tr>
+                                <th>Nome completo</th>
+                                <th>Telefone</th>
+                                <th>Área de interesse</th>
+                                <th>Disponibilidade (Dias)</th>
+                                <th>Turnos disponíveis</th>
+                                <th>Projetos</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-voluntarios-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="paginacao-container">
+                    <span class="info-paginacao" id="info-paginacao">Carregando informações...</span>
+                    <div class="controles-paginacao" id="controles-paginacao">
+                    </div>
+                </div>
+
+                <div id="modal-overlay" class="modal-overlay" onclick="fecharModais()"></div>
+
+                <div id="modal-visualizar" class="modal-caixa modal-larga">
+                    <button class="btn-fechar-flutuante" onclick="fecharModais()">
+                        <i class="ph-fill ph-x-circle"></i>
+                    </button>
+                    
+                    <div class="modal-corpo">
+                        <h3 class="titulo-modal-serif">Informações Pessoais</h3>
+                        <div class="grid-2-colunas">
+                            <div class="input-grupo-form">
+                                <label>Nome Completo</label>
+                                <input type="text" id="view-nome" readonly>
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Email</label>
+                                <input type="email" id="view-email" readonly>
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Telefone</label>
+                                <input type="text" id="view-telefone" readonly>
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Data de Nascimento</label>
+                                <input type="date" id="view-nascimento" readonly>
+                            </div>
+                        </div>
+
+                        <h3 class="titulo-modal-serif mt-20">Habilidades</h3>
+                        <div class="grid-view-lado-a-lado">
+                            <div class="lista-habilidades-view" id="view-habilidades-lista">
+                            </div>
+                            <div class="input-grupo-form">
+                                <textarea id="view-outras-habilidades" readonly></textarea>
+                            </div>
+                        </div>
+
+                        <h3 class="titulo-modal-serif mt-20">Disponibilidade (Dias e Horários)</h3>
+                        <div class="grid-view-lado-a-lado">
+                            <div class="lista-habilidades-view" id="view-disponibilidade-lista">
+                            </div>
+                            <div class="input-grupo-form">
+                                <textarea id="view-obs-disponibilidade" readonly></textarea>
+                            </div>
+                        </div>
+
+                        <h3 class="titulo-modal-serif mt-20">Projetos Sociais Vinculados</h3>
+                        <div class="lista-habilidades-view" id="view-projetos-lista" style="min-height: 50px;">
+                        </div>
+                    </div>
+                </div> 
+
+                <div id="modal-editar" class="modal-caixa modal-larga">
+                    <button class="btn-fechar-flutuante" onclick="fecharModais()">
+                        <i class="ph-fill ph-x-circle"></i>
+                    </button>
+                    
+                    <div class="modal-corpo">
+                        <form id="form-editar-voluntario">
+                            <input type="hidden" id="edit-id">
+                            <h3 class="titulo-modal-serif">Editar Informações Pessoais</h3>
+                            <div class="grid-2-colunas">
+                                <div class="input-grupo-form">
+                                    <label>Nome Completo</label>
+                                    <input type="text" id="edit-nome" placeholder="Nome Completo">
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>Email</label>
+                                    <input type="email" id="edit-email" placeholder="Email">
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>Telefone</label>
+                                    <input type="text" id="edit-telefone" placeholder="Telefone">
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>Data de Nascimento</label>
+                                    <input type="date" id="edit-nascimento">
+                                </div>
+                            </div>
+
+                            <h3 class="titulo-modal-serif mt-20">Habilidades</h3>
+                            <div class="grid-view-lado-a-lado">
+                                <div class="grid-2-colunas" style="gap: 10px;">
+                                    <label><input type="checkbox" name="edit-habilidade" value="Educação/Ensino"> Educação/Ensino</label>
+                                    <label><input type="checkbox" name="edit-habilidade" value="Esporte/Lazer"> Esporte/Lazer</label>
+                                    <label><input type="checkbox" name="edit-habilidade" value="Evento/Organização"> Evento/Org.</label>
+                                    <label><input type="checkbox" name="edit-habilidade" value="Saúde/Bem Estar"> Saúde/Bem Estar</label>
+                                    <label><input type="checkbox" name="edit-habilidade" value="Administrativo"> Administrativo</label>
+                                    <label><input type="checkbox" name="edit-habilidade" value="Logística"> Logística</label>
+                                </div>
+                                <div class="input-grupo-form">
+                                    <textarea id="edit-outras-habilidades" placeholder="Outras habilidades (se houver)"></textarea>
+                                </div>
+                            </div>
+
+                            <h3 class="titulo-modal-serif mt-20">Disponibilidade (Dias e Horários)</h3>
+                            <div class="grid-view-lado-a-lado">
+                                <table class="tabela-disponibilidade tabela-view">
+                                    <thead>
+                                        <tr>
+                                            <th></th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th><th>Dom</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Manhã</strong><br><small>8-12h</small></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Seg-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Ter-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qua-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qui-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sex-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sab-Manha"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Dom-Manha"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Tarde</strong><br><small>13-17h</small></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Seg-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Ter-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qua-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qui-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sex-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sab-Tarde"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Dom-Tarde"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Noite</strong><br><small>18-22h</small></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Seg-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Ter-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qua-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Qui-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sex-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Sab-Noite"></td>
+                                            <td><input type="checkbox" name="edit-disponibilidade" value="Dom-Noite"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="input-grupo-form">
+                                    <textarea id="edit-obs-disponibilidade" placeholder="Observações sobre a disponibilidade..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="acoes-modal-centralizadas">
+                                <button type="submit" class="btn-modal-salvar">SALVAR</button>
+                                <button type="button" class="btn-modal-deletar" style="background-color: #a89f9e;" onclick="fecharModais()">CANCELAR</button>
+                            </div>
+                        </form>
+                    </div>
+                </div> 
+
+                <div id="modal-config" class="modal-caixa">
+                    <button class="btn-fechar-flutuante" onclick="fecharModais()">
+                        <i class="ph-fill ph-x-circle"></i>
+                    </button>
+                    
+                    <div class="modal-corpo">
+                        <form id="form-vincular-projeto">
+                            <input type="hidden" id="config-voluntario-id">
+                            
+                            <h3 class="titulo-modal-serif">Vincular a Projetos Sociais</h3>
+                            
+                            <div class="input-grupo-form" style="margin-bottom: 20px;">
+                                <label>Voluntário selecionado:</label>
+                                <input type="text" id="config-nome" readonly style="background-color: #f4f4f4; color: #666; cursor: not-allowed;">
+                            </div>
+
+                            <h3 class="titulo-modal-serif mt-20">Projetos Sociais Disponíveis</h3>
+                            
+                            <div class="grid-3-colunas" id="container-projetos-dinamicos" style="margin-bottom: 30px;">
+                                <p>Carregando projetos...</p>
+                            </div>
+
+                            <div class="acoes-modal-centralizadas">
+                                <button type="button" class="btn-modal-salvar" onclick="salvarVinculoProjetos()">SALVAR VÍNCULOS</button>
+                                <button type="button" class="btn-modal-deletar" style="background-color: #a89f9e;" onclick="fecharModais()">CANCELAR</button>
+                            </div>
+                        </form>
+                    </div>
+                </div> 
+                </main>
+
+            <div id="footer-container"></div>
+
+        </div> 
+    </div>
+</body>
+</html>

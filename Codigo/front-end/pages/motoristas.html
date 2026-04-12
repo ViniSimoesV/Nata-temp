@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Motoristas - NATA</title>
+        <link rel="stylesheet" href="../css/layout.css"> 
+        <link rel="stylesheet" href="../css/sidebar.css">
+        <link rel="stylesheet" href="../css/topbar.css">
+        <link rel="stylesheet" href="../css/cardAnimado.css">
+        <link rel="stylesheet" href="../css/modalB.css">        
+        <link rel="stylesheet" href="../css/filtros.css">
+        <link rel="stylesheet" href="../css/motoristas.css">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
+        <script src="../js/sidebar.js" defer></script>
+        <script src="../js/topbar.js" defer></script>
+        <script src="../js/motoristas.js" defer></script>
+    </head>
+    <body data-nav-active="motoristas">
+        <div class="layout-app">
+
+            <div id="sidebar-container"></div>
+
+            <div class="conteudo-direito">
+                
+                <header class="topbar">
+                    <div class="topbar-titulo">
+                        <h1> Motoristas </h1>
+                    </div>
+                    
+                    <div class="topbar-usuario">
+                        <div class="separador"></div>
+                        <span class="saudacao">
+                            Olá, <strong id="nome-usuario">carregando...</strong>
+                        </span>
+                    </div>
+                </header>
+
+                <main class="area-principal">
+                    <div class="acoes-topo">
+                        <button class="btn-primario" onclick="window.location.href='cadastromotorista.html'">
+                            <i class="ph ph-plus"></i> Adicionar motorista
+                        </button>
+                    </div>
+
+                    <h2 class="titulo-secao">Lista de motoristas</h2>
+
+                    <div class="barra-filtros">
+                        <div class="input-grupo pesquisa">
+                            <i class="ph ph-magnifying-glass"></i> 
+                            <input type="text" id="pesquisa-nome" placeholder="Pesquisar por nome...">
+                        </div>
+
+                        <div class="filtros-container-flex">
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">CNH:</span>
+                                <label><input type="checkbox" class="filtro-cnh" value="cnh_a"> A</label>
+                                <label><input type="checkbox" class="filtro-cnh" value="cnh_b"> B</label>
+                                <label><input type="checkbox" class="filtro-cnh" value="cnh_c"> C</label>
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Turno:</span>
+                                <label><input type="checkbox" class="filtro-turno" value="manha"> M</label>
+                                <label><input type="checkbox" class="filtro-turno" value="tarde"> T</label>
+                                <label><input type="checkbox" class="filtro-turno" value="noite"> N</label>
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Dia:</span>
+                                <select id="filtro-dia" class="select-filtro">
+                                    <option value="">Todos os dias</option>
+                                    <option value="seg">Segunda</option>
+                                    <option value="ter">Terça</option>
+                                    <option value="qua">Quarta</option>
+                                    <option value="qui">Quinta</option>
+                                    <option value="sex">Sexta</option>
+                                    <option value="sab">Sábado</option>
+                                    <option value="dom">Domingo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-cards" id="container-motoristas">
+                    </div>
+
+                    <div class="paginacao-container">
+                        <span class="info-paginacao" id="info-paginacao">Carregando informações...</span>
+                        <div class="controles-paginacao" id="controles-paginacao"></div>
+                    </div>
+
+                    <div class="modal-overlay" id="modal-overlay" onclick="fecharModais()"></div>
+
+                    <div class="modal-caixa modal-larga" id="modal-editar-motorista">
+                        <button class="btn-fechar-flutuante" onclick="fecharModais()">&times;</button>
+
+                        <div class="modal-corpo">
+                            <h2 class="titulo-modal-serif">Editar Dados do Motorista</h2>
+
+                            <form id="form-editar-motorista">
+                                <input type="hidden" id="editar-id">
+
+                                <div class="grid-2-colunas mt-20">
+                                    <div class="input-grupo-form">
+                                        <label for="editar-nome">Nome do Motorista</label>
+                                    <input type="text" id="editar-nome" required>
+                                    </div>
+                                    <div class="input-grupo-form">
+                                        <label for="editar-cpf">CPF</label>
+                                        <input type="text" id="editar-cpf">
+                                    </div>
+                                </div>
+
+                                <div class="grid-2-colunas mt-20">
+                                    <div class="input-grupo-form">
+                                        <label for="editar-email">E-mail</label>
+                                        <input type="email" id="editar-email">
+                                    </div>
+                                    <div class="input-grupo-form">
+                                        <label for="editar-telefone">Telefone</label>
+                                        <input type="text" id="editar-telefone">
+                                    </div>
+                                </div>
+                                
+                                <div class="input-grupo-form mt-20">
+                                    <label for="editar-cep">CEP</label>
+                                    <input type="text" id="editar-cep">
+                                </div>
+
+                                <div class="grid-3-colunas mt-20">
+                                    <div class="input-grupo-form">
+                                        <label for="editar-rua">Rua/Avenida</label>
+                                        <input type="text" id="editar-rua">
+                                    </div>
+                                    <div class="input-grupo-form">
+                                        <label for="editar-numero">Número</label>
+                                        <input type="text" id="editar-numero">
+                                    </div>
+                                    <div class="input-grupo-form">
+                                        <label for="editar-bairro">Bairro</label>
+                                        <input type="text" id="editar-bairro">
+                                    </div>
+                                </div>
+
+                                <div class="input-grupo-form mt-20">
+                                    <label for="editar-cidade">Cidade</label>
+                                    <input type="text" id="editar-cidade">
+                                </div>
+
+                                <div class="input-grupo-form mt-20">
+                                    <label>Tipo de CNH</label>
+                                    <div class="radio-status">
+                                        <label><input type="checkbox" id="editar-cnh-a"> A</label>
+                                        <label><input type="checkbox" id="editar-cnh-b"> B</label>
+                                        <label><input type="checkbox" id="editar-cnh-c"> C</label>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="acoes-modal-centralizadas">
+                                    <button type="button" class="btn-modal-deletar-real" onclick="abrirConfirmacaoExclusao()">
+                                        <i class="ph ph-trash"></i> EXCLUIR
+                                    </button>
+                                    <button type="button" class="btn-modal-deletar" onclick="fecharModais()">Cancelar</button>
+                                    <button type="submit" class="btn-modal-salvar">
+                                        <i class="ph ph-floppy-disk"></i> Atualizar Dados
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="modal-caixa modal-confirmacao" id="modal-confirmar-exclusao">
+                        <div class="modal-corpo-confirmacao">
+                            <header class="header-confirmacao">
+                                <h3>REMOVER [<span id="nome-exclusao-titulo"></span>] ?</h3>
+                            </header>
+                            <div class="conteudo-confirmacao">
+                                <p>TEM CERTEZA QUE DESEJA EXCLUIR O MOTORISTA [<span id="nome-exclusao-corpo"></span>]?</p>
+                            </div>
+                            <div class="acoes-confirmacao">
+                                <button type="button" class="btn-cancela-confirmacao" onclick="fecharConfirmacao()">CANCELAR</button>
+                                <button type="button" class="btn-sim-confirmacao" id="btn-confirmar-delete">SIM</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+                </main>
+
+                <div id="footer-container"></div>
+
+            </div>
+        </div> 
+    </body>
+</html>

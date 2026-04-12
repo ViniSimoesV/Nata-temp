@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Participantes - NATA</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+    <link rel="stylesheet" href="../css/tabela.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="../js/sidebar.js" defer></script>
+    <script src="../js/topbar.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script src="../js/participantes.js" defer></script>
+</head>
+
+<body data-nav-active="participantes">
+    <div class="layout-app">
+
+        <div id="sidebar-container"></div>
+
+        <div class="conteudo-direito">
+
+            <header class="topbar">
+                <div class="topbar-titulo">
+                    <h1>Participantes</h1>
+                </div>
+
+                <div class="topbar-usuario">
+                    <div class="separador"></div>
+                    <span class="saudacao">
+                        Olá, <strong id="nome-usuario">carregando...</strong>
+                    </span>
+                </div>
+            </header>
+
+            <main class="area-principal area-cadastro">
+
+                <div class="cabecalho-cadastro">
+                    <button class="btn-voltar" onclick="window.history.back()">
+                        <i class="ph ph-caret-left"></i> Voltar
+                    </button>
+                    <h2 class="titulo-serifado">CADASTRAR NOVO PARTICIPANTE</h2>
+                    <div></div>
+                </div>
+
+                <hr class="linha-divisoria">
+
+                <form class="form-cadastro" onsubmit="cadastrarParticipante(event)">
+
+                    <section class="secao-form">
+                        <div class="secao-header">
+                            <h3>Informações do aluno</h3>
+                        </div>
+
+                        <div class="grid-2-colunas">
+                            <div class="input-grupo-form">
+                                <label>Nome Completo</label>
+                                <input type="text" id="nome-aluno" required placeholder="Digite o nome completo">
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Série Escolar</label>
+                                <input type="text" id="serie-escolar" placeholder="Ex: 5º ano">
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Data de Nascimento</label>
+                                <input type="date" id="data-nascimento">
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Nome da Escola</label>
+                                <input type="text" id="nome-escola" placeholder="Escola onde estuda">
+                            </div>
+                        </div>
+
+                        <div class="input-grupo-form mt-15">
+                            <label>Possui alguma necessidade específica de aprendizagem?</label>
+                            <div style="display: flex; gap: 20px; margin: 10px 0; align-items: center;">
+                                <label style="font-weight: 400;"><input type="radio" name="tem_necessidade" value="Sim">
+                                    Sim</label>
+                                <label style="font-weight: 400;"><input type="radio" name="tem_necessidade" value="Não"
+                                        checked> Não</label>
+                                <span style="margin-left: 10px;">Qual?</span>
+                                <input type="text" id="necessidades-detalhe" style="flex: 1; margin-top: 0;"
+                                    placeholder="Descreva aqui...">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="secao-form">
+                        <h3>Dados do Responsável</h3>
+                        <div class="grid-2-colunas">
+                            <div class="input-grupo-form">
+                                <label>Nome do Responsável</label>
+                                <input type="text" id="nome-responsavel" required>
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Parentesco</label>
+                                <input type="text" id="parentesco-responsavel" placeholder="Mãe, Pai, Avô...">
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Telefone de Contato</label>
+                                <input type="text" id="telefone-responsavel" placeholder="( ) _____-____">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="secao-form">
+                        <h3>Escolha de Horários</h3>
+                        <div id="container-horarios" class="grid-2-colunas" style="gap: 40px;">
+                            <div class="opcoes-horario">
+                                <p><strong>Reforço Manhã (09h00 às 10h40):</strong></p>
+                                <label><input type="checkbox" name="horario" value="Seg-M"> Segunda-feira</label><br>
+                                <label><input type="checkbox" name="horario" value="Qui-M"> Quinta-feira</label>
+                            </div>
+                            <div class="opcoes-horario">
+                                <p><strong>Reforço Tarde (13h30 às 16h00):</strong></p>
+                                <label><input type="checkbox" name="horario" value="Seg-T"> Segunda-feira</label><br>
+                                <label><input type="checkbox" name="horario" value="Ter-T"> Terça-feira</label><br>
+                                <label><input type="checkbox" name="horario" value="Qua-T"> Quarta-feira</label><br>
+                                <label><input type="checkbox" name="horario" value="Sex-T"> Sexta-feira</label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="secao-form">
+                        <h3>Termo de ciência do(a) Responsável</h3>
+                        <p style="font-size: 0.9rem; color: #666; line-height: 1.4;">
+                            Declaro que estou ciente de que as
+
+                            aulas do projeto “REFORÇO ESCOLAR” possuem dias e horários
+
+                            fixos, previamente informados no ato desta inscrição. Esses horários foram definidos com
+
+                            base na disponibilidade dos(as) bolsistas universitários(as), não sendo possível adaptá- los
+
+                            a especificidades individuais.
+                        </p>
+                        <div class="container-termo mt-15">
+                            <label class="checkbox-termo" style="display: flex; align-items: flex-start; gap: 10px;">
+                                <input type="checkbox" id="termo-aceite" required>
+                                <span>Estou de acordo com as condições descritas e autorizo a participação do(a)
+                                    meu(minha) filho(a).</span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <div class="acoes-rodape">
+                        <button type="submit" class="btn-salvar">CADASTRAR PARTICIPANTE</button>
+                        <button type="button" class="btn-cancelar" onclick="window.history.back()">CANCELAR</button>
+                    </div>
+                </form>
+            </main>
+
+            <div id="footer-container"></div>
+
+        </div>
+    </div>
+</body>
+
+</html>

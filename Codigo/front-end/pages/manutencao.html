@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Manutenção - NATA</title>
+        <link rel="stylesheet" href="../css/layout.css"> 
+        <link rel="stylesheet" href="../css/sidebar.css">
+        <link rel="stylesheet" href="../css/topbar.css">
+        <link rel="stylesheet" href="../css/modalB.css">        
+        <link rel="stylesheet" href="../css/filtros.css">
+        <link rel="stylesheet" href="../css/tabelaManutencao.css">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
+        <script src="../js/sidebar.js" defer></script>
+        <script src="../js/topbar.js" defer></script>
+        <script src="../js/manutencao.js" defer></script>
+    </head>
+    <body data-nav-active="manutencao">
+        <div class="layout-app">
+
+            <div id="sidebar-container"></div>
+
+            <div class="conteudo-direito">
+                
+                <header class="topbar">
+                    <div class="topbar-titulo">
+                        <h1> Manutenção </h1>
+                    </div>
+                    
+                    <div class="topbar-usuario">
+                        <div class="separador"></div>
+                        <span class="saudacao">
+                            Olá, <strong id="nome-usuario">carregando...</strong>
+                        </span>
+                    </div>
+                </header>
+
+                <main class="area-principal">
+                    <div class="acoes-topo">
+                        <button class="btn-primario" onclick="window.location.href='cadastromanutencao.html'">
+                            <i class="ph ph-plus"></i> Adicionar manutenção
+                        </button>
+                    </div>
+
+                    <h2 class="titulo-secao">Registros de manutenções</h2>
+
+                    <div class="barra-filtros">
+                        <div class="input-grupo pesquisa">
+                            <i class="ph ph-magnifying-glass"></i> 
+                            <input type="text" id="pesquisa-geral" placeholder="Placa, modelo, serviço ou local...">
+                        </div>
+
+                        <div class="filtros-container-flex">
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Tipo:</span>
+                                <select id="filtro-tipo-servico" class="select-filtro">
+                                    <option value="">Todos</option>
+                                    <option value="Preventiva">Preventiva</option>
+                                    <option value="Corretiva">Corretiva</option>
+                                    <option value="Revisão">Revisão</option>
+                                </select>
+                            </div>
+
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Ordenar por:</span>
+                                <select id="ordenacao-manutencao" class="select-filtro">
+                                    <option value="data-desc">Data (Mais recente)</option>
+                                    <option value="data-asc">Data (Mais antiga)</option>
+                                    <option value="valor-desc">Preço (Maior)</option>
+                                    <option value="valor-asc">Preço (Menor)</option>
+                                    <option value="status">Status</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grupo-filtro">
+                                <span class="label-filtro">Data:</span>
+                                <input type="date" id="filtro-data-especifica" class="input-filtro-data">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="container-cards"> </div>
+
+                    <div class="paginacao-container">
+                        <span class="info-paginacao" id="info-paginacao">Carregando informações...</span>
+                        <div class="controles-paginacao" id="controles-paginacao"></div>
+                    </div>
+
+                    <div class="modal-overlay" id="modal-overlay" onclick="fecharModais()"></div>
+
+                    <div class="modal-caixa modal-larga" id="modal-editar">
+                        <button class="btn-fechar-flutuante" onclick="fecharModais()">&times;</button>
+
+                        <div class="modal-corpo">
+                            <h2 class="titulo-modal-serif">Editar Manutenção</h2>
+                            
+                            <form id="form-editar-manutencao">
+                                <input type="hidden" id="editar-id">
+                                
+                                <section class="secao-form">
+                                    <div class="grid-2-colunas">
+                                        <div class="input-grupo-form">
+                                            <label>Placa do Veículo</label>
+                                            <input type="text" id="editar-placa" readonly>
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label>Tipo de Serviço</label>
+                                            <select id="editar-tipo" required style="padding: 10px; border-radius: 4px; background: #eaeaea; border: 1px solid #ccc;">
+                                                <option value="Preventiva">Preventiva</option>
+                                                <option value="Corretiva">Corretiva</option>
+                                                <option value="Revisão">Revisão</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-grupo-form mt-20">
+                                        <label>Descrição/Serviço</label>
+                                        <input type="text" id="editar-servico" required>
+                                    </div>
+
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label>Data</label>
+                                            <input type="date" id="editar-data" required>
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label>Local</label>
+                                            <input type="text" id="editar-local" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid-2-colunas mt-20">
+                                        <div class="input-grupo-form">
+                                            <label>Custo (R$)</label>
+                                            <input type="number" step="0.01" id="editar-custo">
+                                        </div>
+                                        <div class="input-grupo-form">
+                                            <label>Status</label>
+                                            <select id="editar-status" required style="padding: 10px; border-radius: 4px; background: #eaeaea; border: 1px solid #ccc;">
+                                                <option value="Pendente">Pendente</option>
+                                                <option value="Em Progresso">Em Progresso</option>
+                                                <option value="Concluído">Concluído</option>
+                                                <option value="Cancelado">Cancelado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <div class="acoes-modal-centralizadas">
+                                    <button type="button" class="btn-modal-deletar-real" onclick="abrirConfirmacaoExclusao()">
+                                        <i class="ph ph-trash"></i> EXCLUIR
+                                    </button>
+                                    <button type="button" class="btn-modal-deletar" onclick="fecharModais()">Cancelar</button>
+                                    <button type="submit" class="btn-modal-salvar">
+                                        <i class="ph ph-floppy-disk"></i> Atualizar Dados
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="modal-confirmar-exclusao" class="modal-caixa modal-confirmacao">
+                        <div class="modal-corpo-confirmacao">
+                            <header class="header-confirmacao">
+                                <h3>REMOVER REGISTRO?</h3>
+                            </header>
+                            <div class="conteudo-confirmacao">
+                                <p>Tem certeza que deseja excluir esta manutenção? <br>Esta ação não pode ser desfeita.</p>
+                            </div>
+                            <div class="acoes-confirmacao">
+                                <button type="button" class="btn-cancela-confirmacao" onclick="fecharModais()">CANCELAR</button>
+                                <button type="button" class="btn-sim-confirmacao" id="btn-confirmar-delete">SIM, EXCLUIR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+                </main>
+
+                <div id="footer-container"></div>
+
+            </div>
+        </div> 
+    </body>
+</html>

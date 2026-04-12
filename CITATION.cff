@@ -1,0 +1,31 @@
+cff-version: 1.0.1
+message: Please cite this software using these metadata.
+title: 
+authors:
+  - family-names: Arthur Costa e Costa
+    given-names: Luiz
+  - family-names: Gomes Silva de Oliveira
+    given-names: Maria Clara
+  - family-names: Moreira Chaves Maciel
+    given-names: Miguel
+  - family-names: Vasconcelos Moreira e Silva
+    given-names: Sofia
+  - family-names: Simões Viana
+    given-names: Vinícius
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: Ishitani
+    given-names: Lucila
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: Lúcia da Silva
+    given-names: Soraia
+keywords:
+  - Gestão
+  - Nucleo de apoio
+  - Sustentabilidade
+  - Saúde
+repository-code: 
+license: CC-BY-4.0
+version: 1.0.0
+date-released: 2022-07-14

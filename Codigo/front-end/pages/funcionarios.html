@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários - NATA</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+    <link rel="stylesheet" href="../css/tabela.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="../js/sidebar.js" defer></script>
+    <script src="../js/topbar.js" defer></script>
+    <script src="../js/components.js" defer></script>
+    <script src="../js/funcionarios.js" defer></script>
+</head>
+
+<body data-nav-active="funcionarios">
+    <div class="layout-app">
+        <div id="sidebar-container"></div>
+        <div class="conteudo-direito">
+            <header class="topbar">
+                <div class="topbar-titulo">
+                    <h1>Funcionários</h1>
+                </div>
+
+                <div class="topbar-usuario">
+                    <div class="separador"></div>
+                    <span class="saudacao">
+                        Olá, <strong id="nome-usuario">carregando...</strong>
+                    </span>
+                </div>
+            </header>
+            <main class="area-principal">
+                <div class="acoes-topo">
+                    <button class="btn-primario" onclick="window.location.href='cadastroFuncionario.html'">
+                        <i class="ph ph-plus"></i> Adicionar funcionário
+                    </button>
+                </div>
+                <h2 class="titulo-secao">Lista de funcionários</h2>
+                <div class="barra-filtros">
+                    <div class="input-grupo pesquisa">
+                        <input type="text" id="pesquisa-nome" placeholder="Pesquisar por nome" oninput="pesquisar()">
+                        <i class="ph ph-magnifying-glass"></i>
+                    </div>
+                </div>
+                <div class="tabela-container">
+                    <table class="tabela-dados">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Email</th>
+                                <th>Cargo</th>
+                                <th>Telefone</th>
+                                <th>ID</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-funcionarios-body">
+                        </tbody>
+                    </table>
+                </div>
+                <dialog id="modalEdicao" style="padding: 20px; border-radius: 8px; border: 1px solid #ccc;">
+                    <form id="formEdicao" onsubmit="editarParticipante(event)">
+                        <input type="hidden" id="edit-id">
+                        <input type="hidden" id="edit-senha">
+                        
+                        <section class="secao-form">
+                            <div class="secao-header"><h3>Editar Funcionário</h3></div>
+                            
+                            <div class="grid-2-colunas">
+                                <div class="input-grupo-form">
+                                    <label>Nome Completo</label>
+                                    <input type="text" id="edit-nome" required>
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>CPF</label>
+                                    <input type="text" id="edit-cpf" required maxlength="14">
+                                </div>
+                            </div>
+
+                            <div class="grid-3-colunas" style="margin-top: 15px;">
+                                <div class="input-grupo-form">
+                                    <label>Telefone</label>
+                                    <input type="text" id="edit-telefone" required maxlength="15">
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>Email</label>
+                                    <input type="email" id="edit-email" required>
+                                </div>
+                                <div class="input-grupo-form">
+                                    <label>Cargo</label>
+                                    <select id="edit-cargo" required>
+                                        <option value="professor">Professor</option>
+                                        <option value="financeiro">Financeiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="acoes-rodape">
+                            <button type="submit" class="btn-salvar">SALVAR ALTERAÇÕES</button>
+                            <button type="button" class="btn-cancelar" onclick="document.getElementById('modalEdicao').close()">FECHAR</button>
+                        </div>
+                    </form>
+                </dialog>
+                <dialog id="modalExcluir" style="padding: 20px; border-radius: 8px; border: 1px solid #ccc; text-align: center; max-width: 400px;">
+                    <div class="modal-content">
+                        <h3>Confirmar Exclusão</h3>
+                        <p>Você tem certeza que deseja excluir o funcionário <br>
+                        <strong id="nome-excluir-exibicao">---</strong>?</p>
+                        <p style="color: #666; font-size: 0.9em;">Esta ação não pode ser desfeita.</p>
+                        
+                        <input type="hidden" id="id-excluir-oculto">
+
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                            <button class="btn-modal-salvar" type="button" 
+                                    onclick="document.getElementById('modalExcluir').close()">
+                                CANCELAR
+                            </button>
+                            <button class="btn-modal-deletar" type="button" 
+                                    onclick="executarExclusao()">
+                                EXCLUIR
+                            </button>
+                        </div>
+                    </div>
+                </dialog>
+            </main>
+            <div id="footer-container"></div>
+        </div>
+    </div>
+</body>
+</html>

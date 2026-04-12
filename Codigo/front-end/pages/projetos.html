@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Projetos - NATA</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+    <link rel="stylesheet" href="../css/projetos.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/sidebar.js" defer></script>
+    <script src="../js/topbar.js" defer></script>
+    <script src="../js/projetos.js" defer></script>
+</head>
+
+<body data-nav-active="projetos">
+    <div class="layout-app">
+
+        <div id="sidebar-container"></div>
+
+        <div class="conteudo-direito">
+
+            <header class="topbar">
+                <div class="topbar-titulo">
+                    <h1>Projetos</h1>
+                </div>
+                <div class="topbar-usuario">
+                    <div class="separador"></div>
+                    <span class="saudacao">
+                        Olá, <strong id="nome-usuario">carregando...</strong>
+                    </span>
+                </div>
+            </header>
+
+            <main class="page-content">
+
+                <!-- Cabeçalho -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Projetos</h1>
+                        <p class="page-subtitle">Gerencie os projetos sociais do NATA</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="abrirModalCadastro()">
+                        + Novo Projeto
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-bar">
+                    <input type="text" id="filtroNome" placeholder="Buscar projeto..." class="filter-input" oninput="filtrar()">
+                    <select id="filtroStatus" class="filter-select" onchange="filtrar()">
+                        <option value="">Todos os status</option>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Encerrado">Encerrado</option>
+                        <option value="Suspenso">Suspenso</option>
+                    </select>
+                    <select id="filtroTipo" class="filter-select" onchange="filtrar()">
+                        <option value="">Todos os tipos</option>
+                        <option value="Social">Social</option>
+                        <option value="Educacional">Educacional</option>
+                        <option value="Esportivo">Esportivo</option>
+                        <option value="Saúde">Saúde</option>
+                    </select>
+                </div>
+
+                <!-- Tabela -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Projeto</th>
+                                <th>Tipo</th>
+                                <th>Público-alvo</th>
+                                <th>Início</th>
+                                <th>Término</th>
+                                <th>Status</th>
+                                <th>Responsável</th>
+                                <th>Participantes</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaProjetos"></tbody>
+                    </table>
+                    <div id="emptyState" class="empty-state" style="display:none">
+                        <p>Nenhum projeto encontrado.</p>
+                    </div>
+                </div>
+
+                <!-- Paginação -->
+                <div class="pagination" id="paginacao"></div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Cadastro / Edição -->
+    <div id="modalForm" class="modal-overlay" style="display:none">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalFormTitulo">Novo Projeto</h2>
+                <button class="modal-close" onclick="fecharModalForm()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="formErro" class="form-error"></div>
+                <input type="hidden" id="formId">
+                <div class="form-grid">
+                    <div class="form-group form-group--full">
+                        <label>Nome do Projeto</label>
+                        <input type="text" id="formNome" placeholder="Ex: Futsal NATA" class="form-input">
+                    </div>
+                    <div class="form-group form-group--full">
+                        <label>Descrição</label>
+                        <textarea id="formDescricao" placeholder="Descreva o projeto..." class="form-input form-textarea"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="formTipo" class="form-input">
+                            <option value="">Selecione</option>
+                            <option>Social</option>
+                            <option>Educacional</option>
+                            <option>Esportivo</option>
+                            <option>Saúde</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Público-alvo</label>
+                        <select id="formPublicoAlvo" class="form-input">
+                            <option value="">Selecione</option>
+                            <option>Comunidade</option>
+                            <option>Residente</option>
+                            <option>Ambos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Início</label>
+                        <input type="date" id="formDataInicio" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Término <span class="label-optional">(opcional)</span></label>
+                        <input type="date" id="formDataFim" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="formStatus" class="form-input">
+                            <option>Ativo</option>
+                            <option>Suspenso</option>
+                            <option>Encerrado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Responsável <span class="label-optional">(opcional)</span></label>
+                        <select id="formResponsavel" class="form-input">
+                            <option value="">Selecione um funcionário...</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group--full">
+                        <label>Imagem do Projeto <span class="label-optional">(opcional)</span></label>
+                        <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('formImagem').click()">
+                            <div id="imagePreview" class="image-preview"></div>
+                            <p class="image-upload-hint">Clique para selecionar uma imagem</p>
+                            <p class="image-upload-hint image-upload-hint--small">JPG, PNG — máx. 2MB</p>
+                        </div>
+                        <input type="file" id="formImagem" accept="image/*" style="display:none" onchange="previewImagem(event)">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalForm()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarProjeto()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar -->
+    <div id="modalVer" class="modal-overlay" style="display:none">
+        <div class="modal-card modal-card--lg">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalVerTitulo">Detalhes do Projeto</h2>
+                <button class="modal-close" onclick="fecharModalVer()">✕</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="tab-btn tab-btn--active" id="tabBtnDetalhes" onclick="trocarAba('detalhes')">Detalhes</button>
+                <button class="tab-btn" id="tabBtnParticipantes" onclick="trocarAba('participantes')">
+                    Participantes<span class="tab-count" id="tabCountParticipantes">0</span>
+                </button>
+            </div>
+            <div id="abaDetalhes" class="tab-content">
+                <div id="modalVerConteudo"></div>
+            </div>
+            <div id="abaParticipantes" class="tab-content" style="display:none">
+
+                <!-- Barra: busca + botão novo -->
+                <div class="participantes-toolbar">
+                    <div class="participantes-search-wrap">
+                        <i class="ph ph-magnifying-glass participantes-search-icon"></i>
+                        <input type="text" id="buscaParticipante"
+                               placeholder="Buscar participante existente por nome..."
+                               class="form-input participantes-search-input"
+                               oninput="buscarParticipante()">
+                    </div>
+                    <button class="btn btn-primary btn--sm" onclick="abrirFormNovoParticipante()">
+                        + Novo participante
+                    </button>
+                </div>
+
+                <!-- Resultado da busca -->
+                <div id="resultadoBusca" style="display:none">
+                    <div id="resultadoEncontrado" class="search-result" style="display:none">
+                        <div class="search-result__info">
+                            <span class="search-result__nome" id="resultNome"></span>
+                            <span class="search-result__sub" id="resultResponsavel"></span>
+                        </div>
+                        <button class="btn btn-primary btn--sm" onclick="vincularParticipanteEncontrado()">Vincular</button>
+                    </div>
+                    <div id="resultadoNaoEncontrado" class="search-result search-result--empty" style="display:none">
+                        <span>Nenhum participante encontrado com esse nome.</span>
+                    </div>
+                </div>
+
+                <!-- Form cadastro rápido (oculto por padrão) -->
+                <div id="formNovoParticipante" class="quick-form" style="display:none">
+                    <div class="quick-form__header">
+                        <span class="quick-form__title">Novo Participante</span>
+                        <button class="modal-close" onclick="fecharFormNovoParticipante()">✕</button>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome completo</label>
+                            <input type="text" id="rpNome" class="form-input" placeholder="Nome do participante">
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Nascimento</label>
+                            <input type="date" id="rpDataNasc" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Responsável</label>
+                            <input type="text" id="rpResponsavel" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone do Responsável</label>
+                            <input type="text" id="rpTelefone" class="form-input" inputmode="tel" autocomplete="tel" maxlength="15" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group form-group--full">
+                            <label>Série Escolar <span class="label-optional">(opcional)</span></label>
+                            <input type="text" id="rpSerie" class="form-input" placeholder="Ex: 5º ano">
+                        </div>
+                    </div>
+                    <div id="formNovoParticipanteErro" class="form-error"></div>
+                    <div class="quick-form__actions">
+                        <button class="btn btn-secondary btn--sm" onclick="fecharFormNovoParticipante()">Cancelar</button>
+                        <button class="btn btn-primary btn--sm" onclick="cadastrarEVincular()">Salvar e Vincular</button>
+                    </div>
+                </div>
+
+                <!-- Lista vinculados -->
+                <div class="participantes-list-section">
+                    <p class="participantes-list-label">Vinculados ao projeto</p>
+                    <div id="listaParticipantesVinculados"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalVer()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmar Exclusão -->
+    <div id="modalDeletar" class="modal-overlay" style="display:none">
+        <div class="modal-card modal-card--sm">
+            <div class="modal-header">
+                <h2 class="modal-title">Excluir Projeto</h2>
+                <button class="modal-close" onclick="fecharModalDeletar()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o projeto <strong id="nomeDeletar"></strong>? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalDeletar()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmarDeletar()">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

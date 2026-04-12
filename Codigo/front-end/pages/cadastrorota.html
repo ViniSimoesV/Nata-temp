@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Rota - NATA</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <link rel="stylesheet" href="../css/tabelaManutencao.css"> <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/sidebar.js" defer></script>
+    <script src="../js/topbar.js" defer></script>
+    <script src="../js/cadastrorota.js" defer></script>
+</head>
+<body data-nav-active="rotas">
+    <div class="layout-app">
+        <div id="sidebar-container"></div>
+        <div class="conteudo-direito">
+            <header class="topbar">
+                <div class="topbar-titulo"><h1>Rota</h1></div>
+                <div class="topbar-usuario">
+                    <span class="saudacao">Olá, <strong id="nome-usuario">Admin</strong></span>
+                </div>
+            </header>
+
+            <main class="area-principal area-cadastro">
+                <div class="cabecalho-cadastro">
+                    <button class="btn-voltar" onclick="window.location.href='rotas.html'">
+                        <i class="ph ph-caret-left"></i> Voltar
+                    </button>
+                    <h2 class="titulo">Configurar Nova Rota</h2>
+                </div>
+
+                <form id="form-nova-rota" class="form-cadastro">
+                    <section class="secao-form">
+                        <h3 class="titulo">Informações Gerais</h3>
+                        <div class="grid-2-colunas">
+                            <div class="input-grupo-form">
+                                <label>Nome da Rota</label>
+                                <input type="text" name="nome_rota" placeholder="Ex: Rota Ouro Preto - Centro" required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="grid-2-colunas mt-20">
+                            <div class="input-grupo-form">
+                                <label>Veículo</label>
+                                <select name="id_veiculo" id="select-veiculo" required>
+                                    <option value="">Carregando veículos...</option>
+                                </select>
+                            </div>
+                            <div class="input-grupo-form">
+                                <label>Motorista</label>
+                                <select name="id_motorista" id="select-motorista" required>
+                                    <option value="">Carregando motoristas...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="secao-form">
+                        <h3 class="titulo">Itinerário (Pontos de Parada)</h3>
+                        <div class="grid-2-colunas" style="align-items: flex-end;">
+                            <div class="input-grupo-form">
+                                <label>Adicionar Ponto (Coleta/Entrega)</label>
+                                <select id="select-ponto-base">
+                                    <option value="">Selecione um ponto cadastrado...</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn-primario" onclick="adicionarPontoNaLista()" style="height: 45px;">
+                                <i class="ph ph-plus"></i> Inserir na Rota
+                            </button>
+                        </div>
+
+                        <div class="container-tabela mt-20">
+                            <table class="tabela-manutencao" id="tabela-paradas">
+                                <thead>
+                                    <tr>
+                                        <th>Ordem</th>
+                                        <th>Ponto</th>
+                                        <th>Tipo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-paradas-corpo">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="secao-form">
+                        <h3 class="titulo">Visualização do Mapa</h3>
+                        <div id="mapa-placeholder" style="width: 100%; height: 300px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc;">
+                            <p><i class="ph ph-map-trifold" style="font-size: 2rem;"></i> <br> O mapa será renderizado aqui</p>
+                        </div>
+                    </section>
+
+                    <div class="acoes-rodape">
+                        <button type="button" class="btn-cancelar" onclick="window.location.href='rotas.html'">CANCELAR</button>
+                        <button type="submit" class="btn-salvar">REGISTRAR ROTA</button>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

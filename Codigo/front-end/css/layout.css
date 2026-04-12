@@ -1,0 +1,35 @@
+/* O código vital para a mágica acontecer */
+body { 
+    margin: 0; 
+    padding: 0; 
+    background-color: #f4f5f7; 
+    font-family: 'Inter', sans-serif;
+    color: #333333; 
+}
+
+.layout-app { 
+    display: 
+    flex; height: 100vh; 
+    overflow: hidden; 
+}
+
+#sidebar-container { 
+    flex-shrink: 0; 
+}
+
+.conteudo-direito { 
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    width: calc(100% - 300px); 
+}
+
+.area-principal { 
+    flex-grow: 1; 
+    padding: 30px; 
+    overflow-y: auto; 
+}
+
+input, select, textarea, button {
+    font-family: inherit;
+}
